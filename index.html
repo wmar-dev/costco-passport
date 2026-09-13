@@ -1,0 +1,716 @@
+<title>Food Court Passport</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700&family=Crimson+Pro:ital,wght@0,400;0,500;0,600;1,400&family=Space+Mono:wght@400;700&display=swap">
+<style>
+  :root{
+    --navy:#005DAA;
+    --paper:#ffffff;
+    --paper-2:#f4f4f2;
+    --ink:#1c1c1c;
+    --ink-soft:#5c5852;
+    --red:#E31837;
+    --teal:#800000;
+    --gold:#c9982e;
+    --slot-blank:#ececea;
+    --rule: rgba(28,28,28,0.14);
+    --card-shadow: 0 1px 0 rgba(255,255,255,0.6) inset, 0 10px 24px rgba(0,58,110,0.10);
+  }
+
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    background:var(--paper);
+    color:var(--ink);
+    font-family:"Crimson Pro", Georgia, serif;
+    -webkit-font-smoothing:antialiased;
+  }
+  h1,h2,h3,.display{
+    font-family:"Cinzel", "Times New Roman", serif;
+    text-wrap:balance;
+  }
+  .mono{ font-family:"Space Mono", ui-monospace, monospace; }
+
+  a{ color:inherit; }
+
+  /* ---------- COVER ---------- */
+  .cover{
+    background:
+      radial-gradient(120% 140% at 50% -10%, rgba(175,138,63,0.14), transparent 60%),
+      var(--paper);
+    color:var(--ink);
+    padding: clamp(40px,8vw,80px) 24px clamp(44px,7vw,68px);
+    text-align:center;
+    border-bottom:3px solid var(--gold);
+    position:relative;
+  }
+  .cover::before{
+    content:"";
+    position:absolute; inset:14px;
+    border:1.5px solid rgba(175,138,63,0.45);
+    pointer-events:none;
+  }
+  .cover .kicker{
+    font-family:"Space Mono", monospace;
+    letter-spacing:0.3em;
+    font-size:0.72rem;
+    text-transform:uppercase;
+    color:var(--red);
+    margin:0 0 18px;
+  }
+  .seal{
+    width:92px; height:92px; margin:0 auto 22px;
+    border:2px solid var(--gold);
+    border-radius:50%;
+    display:flex; align-items:center; justify-content:center;
+    font-size:2.4rem;
+    position:relative;
+  }
+  .seal::before{
+    content:"";
+    position:absolute; inset:6px;
+    border:1px dashed rgba(175,138,63,0.6);
+    border-radius:50%;
+  }
+  .cover h1{
+    font-size:clamp(2.1rem, 5vw, 3.4rem);
+    font-weight:700;
+    margin:0 0 10px;
+    letter-spacing:0.02em;
+    color:var(--navy);
+  }
+  .cover .sub{
+    font-size:1.05rem;
+    font-style:italic;
+    color:var(--ink-soft);
+    max-width:46ch;
+    margin:0 auto;
+    font-family:"Crimson Pro", serif;
+  }
+  .cover .bearer{
+    margin-top:34px;
+    display:inline-block;
+    padding:10px 22px;
+    border-top:1px solid var(--rule);
+    border-bottom:1px solid var(--rule);
+    font-family:"Space Mono", monospace;
+    font-size:0.8rem;
+    letter-spacing:0.08em;
+    color:var(--ink-soft);
+  }
+
+  /* ---------- CARD FOOTER CONTROLS ---------- */
+  .count{ font-size:0.76rem; letter-spacing:0.04em; }
+  .count strong{ color:var(--red); font-size:0.9rem; }
+  .geo-btn, .reset-btn{
+    background:transparent;
+    border:1px solid var(--ink-soft);
+    color:var(--ink);
+    font-family:"Space Mono", monospace;
+    font-size:0.72rem;
+    letter-spacing:0.05em;
+    padding:6px 12px;
+    border-radius:3px;
+    cursor:pointer;
+  }
+  .geo-btn:hover, .reset-btn:hover{ background:var(--paper); }
+  .geo-status{
+    text-align:center;
+    font-family:"Space Mono", monospace;
+    font-size:0.72rem;
+    color:var(--gold);
+    min-height:1em;
+    margin:10px 0 0;
+  }
+
+  /* ---------- STAMP CARD ---------- */
+  .stamp-card-wrap{ max-width:940px; margin:0 auto; padding:36px 20px 20px; }
+  .stamp-card{
+    background:var(--paper-2);
+    border:3px solid var(--navy);
+    border-radius:20px;
+    padding:30px clamp(18px,5vw,50px) 34px;
+    box-shadow:var(--card-shadow);
+  }
+  .card-title{
+    text-align:center; margin:0 0 16px;
+    font-size:clamp(1.25rem, 3vw, 1.6rem);
+    letter-spacing:0.06em;
+  }
+  .rule-line{
+    height:3px; border:none; margin:0;
+    background:var(--red);
+  }
+  .card-subtitle{
+    text-align:center; margin:14px 0 22px;
+    font-family:"Space Mono", monospace;
+    font-size:0.74rem;
+    letter-spacing:0.07em;
+    text-transform:uppercase;
+    color:var(--ink-soft);
+  }
+
+  .stamp-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fill, minmax(104px,1fr));
+    gap:26px 14px;
+    padding:4px 0 8px;
+  }
+  .stamp-slot{
+    appearance:none; background:none; border:none; cursor:pointer;
+    font:inherit; color:inherit; padding:4px;
+    display:flex; flex-direction:column; align-items:center; gap:9px;
+    position:relative;
+  }
+  .stamp-slot::after{
+    content:attr(data-tooltip);
+    position:absolute; bottom:calc(100% + 8px); left:50%;
+    transform:translateX(-50%) translateY(4px);
+    width:max-content; max-width:190px;
+    background:var(--ink); color:var(--paper);
+    font-family:"Crimson Pro", serif; font-size:0.82rem; line-height:1.4;
+    text-align:left; padding:9px 12px; border-radius:8px;
+    box-shadow:0 8px 20px rgba(0,0,0,0.28);
+    opacity:0; pointer-events:none; z-index:30;
+    transition:opacity .15s ease, transform .15s ease;
+  }
+  .stamp-slot:hover::after, .stamp-slot:focus-visible::after{
+    opacity:1; transform:translateX(-50%) translateY(0);
+  }
+  .stamp-slot .circle{
+    width:82px; height:82px; border-radius:50%;
+    background:var(--slot-blank);
+    display:flex; align-items:center; justify-content:center;
+    position:relative;
+    transition:background .3s ease, transform .15s ease;
+  }
+  .stamp-slot:hover .circle{ transform:translateY(-2px); }
+  .stamp-slot .ring{
+    position:absolute; inset:4px; border-radius:50%;
+    border:2.5px solid var(--slot-color, var(--ink));
+    opacity:0; transform:scale(1.35) rotate(0deg);
+    transition:opacity .2s ease, transform .32s cubic-bezier(.2,1.4,.4,1);
+  }
+  .stamp-slot.stamped .circle{ background:var(--slot-color, var(--ink)); }
+  .stamp-slot.stamped .ring{ opacity:1; transform:scale(1) rotate(var(--tilt,-6deg)); border-color:var(--paper); }
+  .stamp-slot .food-icon{
+    width:40px; height:40px;
+    color:var(--ink-soft);
+    opacity:0.55;
+    transition:color .25s ease, opacity .25s ease, transform .3s cubic-bezier(.2,1.4,.4,1);
+  }
+  .stamp-slot .food-icon use{ fill:none; stroke:currentColor; stroke-width:2.4; stroke-linecap:round; stroke-linejoin:round; }
+  .stamp-slot.stamped .food-icon{ color:var(--paper); opacity:1; transform:rotate(var(--tilt,-6deg)); }
+  .stamp-slot .label{
+    display:flex; flex-direction:column; align-items:center; gap:2px;
+  }
+  .stamp-slot .label .name-row{
+    font-family:"Space Mono", monospace;
+    font-size:0.68rem; letter-spacing:0.02em;
+    text-align:center; line-height:1.25;
+    color:var(--ink-soft);
+    display:flex; align-items:center; justify-content:center; gap:5px;
+  }
+  .stamp-slot .label .flag-inline{ font-size:1.05em; line-height:1; }
+  .stamp-slot.stamped .label .name-row{ color:var(--ink); }
+  .stamp-slot .label .bonus-tag{
+    font-size:0.58rem; letter-spacing:0.08em;
+    text-transform:uppercase; color:var(--gold);
+  }
+  .stamp-slot.here .circle{ box-shadow:0 0 0 3px var(--gold), 0 0 14px rgba(175,138,63,0.5); }
+  .stamp-slot.open .circle{ outline:2px solid var(--navy); outline-offset:3px; }
+  .stamp-slot:focus-visible .circle{ outline:2px solid var(--gold); outline-offset:3px; }
+
+  .card-footer{
+    display:flex; flex-wrap:wrap; align-items:center; justify-content:center;
+    gap:16px; margin-top:8px;
+  }
+
+  /* ---------- DETAIL PANEL ---------- */
+  .detail-panel{
+    margin-top:26px;
+    background:var(--paper);
+    border:1px solid var(--rule);
+    border-radius:10px;
+    padding:20px 22px 18px;
+  }
+  .detail-head{
+    display:flex; align-items:baseline; gap:10px;
+    border-bottom:1px solid var(--rule);
+    padding-bottom:10px; margin-bottom:14px;
+  }
+  .detail-head .flag{ font-size:1.6rem; }
+  .detail-head h3{ font-size:1.15rem; margin:0; flex:1; }
+  .detail-head .visa-no{
+    font-family:"Space Mono", monospace; font-size:0.68rem;
+    color:var(--ink-soft); letter-spacing:0.03em; white-space:nowrap;
+  }
+  .signature-item{ display:flex; gap:10px; align-items:flex-start; margin-bottom:11px; font-size:0.95rem; line-height:1.5; }
+  .signature-item b{ font-weight:600; }
+  .signature-item .mini-icon{ width:22px; height:22px; flex-shrink:0; margin-top:2px; color:var(--slot-color, var(--ink)); }
+  .signature-item .mini-icon use{ fill:none; stroke:currentColor; stroke-width:3; stroke-linecap:round; stroke-linejoin:round; }
+  .items-list{ margin:0 0 14px; padding:0; list-style:none; }
+  .remove-stamp{
+    font-family:"Space Mono",monospace; font-size:0.7rem; color:var(--ink-soft);
+    background:none; border:none; text-decoration:underline; cursor:pointer; padding:0; margin-top:6px;
+  }
+
+  /* ---------- TIKTOK TICKET ---------- */
+  .ticket{
+    margin-top:14px;
+    background:var(--paper);
+    border:1px dashed var(--rule);
+    border-radius:4px;
+    padding:12px 14px;
+  }
+  .ticket .eyebrow{
+    font-family:"Space Mono",monospace; font-size:0.65rem;
+    letter-spacing:0.08em; text-transform:uppercase; color:var(--ink-soft);
+    margin-bottom:6px; display:block;
+  }
+  .ticket ul{ margin:0; padding:0; list-style:none; }
+  .ticket li{ margin-bottom:6px; font-size:0.86rem; line-height:1.4; }
+  .ticket a{ text-decoration:none; border-bottom:1px solid var(--gold); }
+  .ticket a:hover{ color:var(--red); border-color:var(--red); }
+  .tag{ color:var(--ink-soft); font-family:"Space Mono",monospace; font-size:0.72rem; font-weight:400; }
+
+  footer{
+    text-align:center; padding:30px 20px 50px;
+    color:var(--ink-soft); font-size:0.8rem;
+    font-family:"Space Mono",monospace;
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    .stamp-slot .ring, .stamp-slot .flag, .stamp-slot .circle{ transition:none; }
+  }
+</style>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <filter id="pencil" x="-30%" y="-30%" width="160%" height="160%">
+      <feTurbulence type="fractalNoise" baseFrequency="0.045 0.09" numOctaves="2" seed="6" result="noise"/>
+      <feDisplacementMap in="SourceGraphic" in2="noise" scale="3.2" xChannelSelector="R" yChannelSelector="G"/>
+    </filter>
+
+    <symbol id="ic-hotdog" viewBox="0 0 64 64"><path d="M14,34 C14,24 24,20 32,24 C40,20 50,24 50,34 C50,44 40,48 32,44 C24,48 14,44 14,34 Z"/><path d="M20,32 q3,-5 6,0 q3,-5 6,0 q3,-5 6,0 q3,-5 6,0"/></symbol>
+    <symbol id="ic-bake" viewBox="0 0 64 64"><rect x="17" y="18" width="30" height="28" rx="3"/><path d="M17,27 L47,27 M17,36 L47,36"/><path d="M22,18 q10,-8 20,0"/></symbol>
+    <symbol id="ic-pizza" viewBox="0 0 64 64"><path d="M32,14 L50,46 Q32,54 14,46 Z"/><circle cx="27" cy="30" r="2.1" fill="currentColor" stroke="none"/><circle cx="36" cy="28" r="2.1" fill="currentColor" stroke="none"/><circle cx="31" cy="38" r="2.1" fill="currentColor" stroke="none"/></symbol>
+    <symbol id="ic-poutine" viewBox="0 0 64 64"><path d="M21,26 L43,26 L38,48 L26,48 Z"/><path d="M24,26 L22,12 M29,26 L29,10 M34,26 L34,11 M39,26 L41,13"/><path d="M21,28 q11,-5 22,0"/></symbol>
+    <symbol id="ic-potato" viewBox="0 0 64 64"><ellipse cx="32" cy="35" rx="17" ry="11"/><path d="M18,32 Q32,26 46,32"/><rect x="28" y="30" width="8" height="6" rx="1.5" fill="currentColor" stroke="none"/></symbol>
+    <symbol id="ic-pie" viewBox="0 0 64 64"><path d="M16,40 Q16,16 32,16 Q48,16 48,40 Z"/><path d="M16,40 l4,-5 l4,5 l4,-5 l4,5 l4,-5 l4,5 l4,-5 l4,5"/></symbol>
+    <symbol id="ic-croquette" viewBox="0 0 64 64"><ellipse cx="24" cy="30" rx="10" ry="6" transform="rotate(-18 24 30)"/><ellipse cx="40" cy="38" rx="10" ry="6" transform="rotate(12 40 38)"/></symbol>
+    <symbol id="ic-sandwich" viewBox="0 0 64 64"><path d="M14,46 L50,46 L32,16 Z"/><path d="M21,34 Q32,29 43,34"/><circle cx="26" cy="40" r="1.5" fill="currentColor" stroke="none"/><circle cx="38" cy="40" r="1.5" fill="currentColor" stroke="none"/></symbol>
+    <symbol id="ic-croissant" viewBox="0 0 64 64"><path d="M16,38 C14,24 30,14 46,20 C36,21 27,28 26,38 C33,32 42,32 46,36 C40,46 24,48 16,38 Z"/></symbol>
+    <symbol id="ic-sushi" viewBox="0 0 64 64"><circle cx="32" cy="32" r="16"/><circle cx="32" cy="32" r="9"/><path d="M32,23 A9,9 0 0,1 32,41" opacity="0.6"/></symbol>
+    <symbol id="ic-smoothie" viewBox="0 0 64 64"><path d="M22,22 L42,22 L38,48 L26,48 Z"/><path d="M35,22 L40,8"/><path d="M22,24 q10,-6 20,0" opacity="0.6"/></symbol>
+    <symbol id="ic-churro" viewBox="0 0 64 64"><path d="M16,46 Q26,20 44,14"/><path d="M20,38 l5,-3 M25,31 l5,-3 M30,24 l5,-3 M35,18 l4,-3"/></symbol>
+    <symbol id="ic-chicken" viewBox="0 0 64 64"><ellipse cx="30" cy="26" rx="13" ry="10"/><path d="M29,35 L24,48 M31,35 L36,48"/><ellipse cx="30" cy="49" rx="4" ry="2.6"/></symbol>
+    <symbol id="ic-softserve" viewBox="0 0 64 64"><path d="M23,34 L41,34 L37,48 L27,48 Z"/><path d="M21,34 Q23,16 32,24 Q36,12 43,22 Q42,30 34,30 Q27,30 21,34 Z"/></symbol>
+    <symbol id="ic-mooncake" viewBox="0 0 64 64"><rect x="16" y="16" width="32" height="32" rx="4"/><path d="M32,16 L32,48 M16,32 L48,32"/></symbol>
+    <symbol id="ic-burger" viewBox="0 0 64 64"><path d="M15,27 Q32,13 49,27"/><path d="M14,32 L50,32"/><path d="M14,38 L50,38"/><path d="M16,43 Q32,50 48,43"/></symbol>
+    <symbol id="ic-soup" viewBox="0 0 64 64"><path d="M14,30 Q14,46 32,46 Q50,46 50,30 Z"/><path d="M14,30 L50,30"/><path d="M25,22 Q23,17 27,12 M35,22 Q33,17 37,12" opacity="0.6"/></symbol>
+    <symbol id="ic-sparkle" viewBox="0 0 64 64"><path d="M32,12 L36,28 L52,32 L36,36 L32,52 L28,36 L12,32 L28,28 Z"/></symbol>
+    <symbol id="ic-seedling" viewBox="0 0 64 64"><path d="M32,50 L32,30"/><path d="M32,30 Q20,30 18,18 Q30,20 32,30"/><path d="M32,30 Q44,30 46,18 Q34,20 32,30" opacity="0.7"/></symbol>
+    <symbol id="ic-musubi" viewBox="0 0 64 64"><rect x="16" y="18" width="32" height="28" rx="2"/><rect x="16" y="28" width="32" height="8" fill="currentColor" stroke="none" opacity="0.85"/></symbol>
+    <symbol id="ic-leafwrap" viewBox="0 0 64 64"><path d="M18,20 L46,20 L40,46 L24,46 Z"/><path d="M32,16 L32,50" opacity="0.6"/></symbol>
+  </defs>
+</svg>
+
+<div class="cover">
+  <p class="kicker">Membership Required &middot; Valid Worldwide</p>
+  <div class="seal">🛒</div>
+  <h1>Food Court Passport</h1>
+  <p class="sub">One warehouse chain, fourteen countries, fourteen very different hot dogs. Collect a stamp in every nation with a Costco food court.</p>
+  <div class="bearer">BEARER: KIRKLAND MEMBER &nbsp;·&nbsp; ISSUED 2026 &nbsp;·&nbsp; TYPE: MULTIPLE ENTRY</div>
+</div>
+
+<div class="stamp-card-wrap">
+  <div class="stamp-card">
+    <h2 class="card-title">Collect Stamps Here</h2>
+    <hr class="rule-line">
+    <p class="card-subtitle">Tap a circle to stamp it, no customs officer required</p>
+    <div class="stamp-grid" id="stampGrid"></div>
+    <hr class="rule-line">
+    <div class="card-footer">
+      <span class="count mono">STAMPS COLLECTED: <strong id="countNow">0</strong>/<span id="countTotal">14</span></span>
+      <button class="geo-btn" id="geoBtn" type="button">📍 Detect my location</button>
+      <button class="reset-btn" id="resetBtn" type="button">Reset passport</button>
+    </div>
+    <p class="geo-status" id="geoStatus" aria-live="polite"></p>
+    <div class="detail-panel" id="detailPanel" hidden></div>
+  </div>
+</div>
+
+<footer>
+  MRZ&nbsp;&nbsp;P&lt;KIRKLANDMEMBER&lt;&lt;FOODCOURT&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;<br>
+  Not affiliated with Costco Wholesale Corporation. A fan-made travel game.
+</footer>
+
+<script>
+(function(){
+  var COUNTRIES = [
+    {
+      id:"us", flag:"🇺🇸", name:"United States", visa:"NO. 1985-0150",
+      shape:"circle", color:"var(--red)", tilt:-7,
+      box:[24,49,-125,-66],
+      items:[
+        ["The $1.50 hot dog & soda", "Unchanged since 1985, when a successor suggested raising it, co-founder Jim Sinegal reportedly said, “If you raise the hot dog, I will kill you.”", "hotdog"],
+        ["Chicken Bake", "The bestselling item in the entire food court, nationwide.", "bake"],
+        ["Regional specials", "Some SoCal warehouses run birria-adjacent limited items that never leave the state.", "pizza"]
+      ],
+      tiktoks:[
+        ["“Most expensive Costco hot dog combos across countries”", "https://www.tiktok.com/@shophocho/video/7503429681920855342", "@shophocho"],
+        ["The hot-dog price mythology, explained", "https://www.tiktok.com/discover/costco-hot-dog", "#costcohotdog"]
+      ]
+    },
+    {
+      id:"ca", flag:"🇨🇦", name:"Canada", visa:"NO. 6.99-CAD",
+      shape:"badge", color:"var(--teal)", tilt:6,
+      box:[42,70,-141,-52],
+      items:[
+        ["Poutine", "Fries, squeaky cheese curds, and beef gravy, a Costco exclusive north of the border, and the item Americans are most jealous of.", "poutine"],
+        ["Chicken strips & fries combo", "A fast-food-style combo that doesn't exist on the U.S. menu.", "chicken"],
+        ["Polish dog & pop", "Runs about $1.50 CAD, the Canadian sibling of the American hot dog deal.", "hotdog"]
+      ],
+      tiktoks:[
+        ["“Trying Canada Costco food court,” full price breakdown", "https://www.tiktok.com/@eatwcass/video/7528851437682494733", "@eatwcass"],
+        ["Poutine taste test", "https://www.tiktok.com/@thesodafry/video/7404200742791171370", "@thesodafry"]
+      ]
+    },
+    {
+      id:"mx", flag:"🇲🇽", name:"Mexico", visa:"NO. CDMX-09",
+      shape:"circle", color:"var(--red)", tilt:5,
+      box:[14,33,-118,-86],
+      items:[
+        ["Mango slushie", "The single most-mentioned Costco Mexico food-court item, tart, icy, and viral on its own.", "smoothie"],
+        ["Tortas al pastor", "Mexico City food courts serve al pastor tortas with jalapeños alongside the standard menu.", "sandwich"],
+        ["Caramel churro sundae", "Soft serve topped with salted caramel and cinnamon-sugar churro bites.", "churro"]
+      ],
+      tiktoks:[
+        ["El helado de mango viral de TikTok que compran en Costco", "https://www.tiktok.com/discover/el-helado-de-mango-viral-de-tiktok-que-compran-en-costco", "#costcomexico"],
+        ["Costco Mexico churro reviews & “churro challenge”", "https://www.tiktok.com/discover/costco-mexico-churros", "#costcochurros"]
+      ]
+    },
+    {
+      id:"gb", flag:"🇬🇧", name:"United Kingdom", visa:"NO. £2.99",
+      shape:"badge", color:"var(--teal)", tilt:-5,
+      box:[49.9,60.9,-8,1.8],
+      items:[
+        ["Jacket potato", "A proper baked potato, split hot and topped with butter and toppings like tuna, cheese, chilli, or beans, the item Americans keep begging Costco to bring home.", "potato"],
+        ["Aberdeen Angus cottage pie", "A Scottish-style beef pie found nowhere in the U.S. lineup.", "pie"],
+        ["Caramel fudge sundae", "One of several UK-only dessert options.", "softserve"]
+      ],
+      tiktoks:[
+        ["“£2.99 for a jacket potato, incredible value”", "https://www.tiktok.com/@jackeatseverything/video/7311839606482144544", "@jackeatseverything"],
+        ["Jacket potato review", "https://www.tiktok.com/@spudarmy/video/7300939804252900640", "@spudarmy"]
+      ]
+    },
+    {
+      id:"es", flag:"🇪🇸", name:"Spain", visa:"NO. 9.99-EUR",
+      shape:"circle", color:"var(--red)", tilt:8,
+      box:[36,43.8,-9.3,3.3],
+      items:[
+        ["Croquetas de jamón", "Fried, breaded croquettes stuffed with serrano ham, a food-court item built around Spain's obsession with cured ham.", "croquette"],
+        ["Bocadillo de jamón y queso", "A simple ham-and-cheese sandwich on a baguette roll.", "sandwich"],
+        ["California combo sushi", "Seville locations sell a €9.99 sushi combo alongside the usual pizza and hot dogs.", "sushi"]
+      ],
+      tiktoks:[
+        ["Probando croquetas de jamón serrano de Costco", "https://www.tiktok.com/@paulariosgarza/video/7193560114245143813", "@paulariosgarza"],
+        ["Croquetas ibéricas de jamón serrano", "https://www.tiktok.com/@soyelarturito/video/7242131618238975238", "@soyelarturito"]
+      ]
+    },
+    {
+      id:"fr", flag:"🇫🇷", name:"France", visa:"NO. 4.00-EUR",
+      shape:"badge", color:"var(--teal)", tilt:4,
+      box:[41,51.1,-5.2,9.6],
+      items:[
+        ["Ham & cheese croissant", "Melty, buttery, with mustard, served instead of the standard chicken bake at most French warehouses.", "croissant"],
+        ["BBQ chicken pizza", "A topping combination unique to the French menu.", "pizza"],
+        ["€2 hot dog & drink", "Roughly the same iconic price as the U.S. version, converted.", "hotdog"]
+      ],
+      tiktoks:[
+        ["Costco Paris food court walk-through", "https://www.tiktok.com/discover/costco-paris-food-court", "#costcoparis"]
+      ]
+    },
+    {
+      id:"jp", flag:"🇯🇵", name:"Japan", visa:"NO. ¥980",
+      shape:"circle", color:"var(--red)", tilt:-6,
+      box:[24,45.5,122,146],
+      items:[
+        ["Shrimp katsu burger", "A breaded, deep-fried shrimp patty with lettuce and spicy slaw, around $5, and entirely absent from the U.S. menu.", "burger"],
+        ["All-pork hot dog", "Japan's hot dog uses pork instead of the U.S. beef frank.", "hotdog"],
+        ["Rotating seasonal pizza", "Toppings change through the year, alongside an Aussie-style beef pie and a bacon corn chowder.", "pizza"]
+      ],
+      tiktoks:[
+        ["Costco Japan food court taste test", "https://www.tiktok.com/discover/costco-japan-food-court", "#costcojapan"]
+      ]
+    },
+    {
+      id:"kr", flag:"🇰🇷", name:"South Korea", visa:"NO. ₩9,900",
+      shape:"badge", color:"var(--teal)", tilt:7,
+      box:[33,38.6,125,129.6],
+      items:[
+        ["Bulgogi bake", "Marinated beef in a cheesy baked dough pocket, arguably the single most-requested item Americans want imported, with petitions circulating on TikTok.", "bake"],
+        ["Bulgogi pizza", "Topped with tender bulgogi beef instead of pepperoni.", "pizza"],
+        ["Hamburg steak with fried rice", "A Japanese-influenced entree alongside pork cutlets and strawberry milkshakes.", "burger"]
+      ],
+      tiktoks:[
+        ["“Petition to bring the bulgogi pizza to California”", "https://www.tiktok.com/@eesstherlee/video/7462546296394534187", "@eesstherlee"],
+        ["Bulgogi pizza & bulgogi bake review", "https://www.tiktok.com/@jasnhill/video/7429092195644214571", "@jasnhill"],
+        ["Bulgogi pizza review", "https://www.tiktok.com/@tiffanytchen/video/7275539726554172714", "@tiffanytchen"]
+      ]
+    },
+    {
+      id:"tw", flag:"🇹🇼", name:"Taiwan", visa:"NO. NT$299",
+      shape:"circle", color:"var(--red)", tilt:-8,
+      box:[21.9,25.3,120,122],
+      items:[
+        ["Crispy chicken bucket", "About $10 for a bucket of fried chicken, a food-court format the U.S. doesn't offer.", "chicken"],
+        ["Seafood pizza & clam chowder", "Taipei's rotating menu swaps in seafood pizza and clam chowder as regular fixtures.", "soup"],
+        ["Truffle mushroom pizza", "A garlic-cream, truffle-sauce pizza that's become its own TikTok trend.", "pizza"]
+      ],
+      tiktoks:[
+        ["“Costco Food Court in Taiwan is 🤤,” full spread review", "https://www.tiktok.com/@hungryhugh/video/7281427892217613611", "@hungryhugh"],
+        ["Taiwan food court mukbang", "https://www.tiktok.com/@waynedang/video/7220169519166213418", "@waynedang"],
+        ["Truffle mushroom pizza", "https://www.tiktok.com/discover/truffle-mushroom-pizza-costco", "#trufflepizza"]
+      ]
+    },
+    {
+      id:"cn", flag:"🇨🇳", name:"China", visa:"NO. ¥10.9",
+      shape:"badge", color:"var(--teal)", tilt:5,
+      box:[18,53,73,135],
+      items:[
+        ["Okonomiyaki-style pizza", "Topped with octopus, green pepper, corn, mayo, and bonito flakes, a Japanese-street-food riff found in Shanghai food courts.", "pizza"],
+        ["Milk tea & Earl Grey soft serve", "Tea-flavored soft serve flavors alongside the standard vanilla.", "softserve"],
+        ["Pork mooncakes & red wine beef pie", "Seasonal and savory items unique to the Chinese menu.", "mooncake"]
+      ],
+      tiktoks:[
+        ["Shanghai Costco food court tour", "https://www.tiktok.com/discover/shanghai-costco-food-court", "#shanghaicostco"]
+      ]
+    },
+    {
+      id:"au", flag:"🇦🇺", name:"Australia", visa:"NO. $7.99",
+      shape:"circle", color:"var(--red)", tilt:6,
+      box:[-43.6,-10.5,113,153.6],
+      items:[
+        ["Aussie steak pie", "300 grams of chunky steak and gravy wrapped in flaky pastry for $7.99, repeatedly named the item other countries most envy.", "pie"],
+        ["Butter chicken pie", "A curry-filled variant that's appeared alongside the classic steak pie.", "soup"]
+      ],
+      tiktoks:[
+        ["“NEW Costco Aussie chunky steak pie” review", "https://www.tiktok.com/@angeeats/video/7380994829574032647", "@angeeats"],
+        ["Aussie beef pie mukbang", "https://www.tiktok.com/@maorifoodbae/video/7574720152487382279", "@maorifoodbae"]
+      ]
+    },
+    {
+      id:"is", flag:"🇮🇸", name:"Iceland", visa:"NO. KR199",
+      shape:"badge", color:"var(--teal)", tilt:-4,
+      box:[63.3,66.6,-24.5,-13.5],
+      items:[
+        ["The hot dog, at Icelandic prices", "Same combo, recalculated for one of the world's most expensive countries, a recurring “wait, how much?” moment in travel content.", "hotdog"],
+        ["Sushi counter", "Reykjavík's warehouse food court sells sushi alongside the standard pizza and hot dogs.", "sushi"]
+      ],
+      tiktoks:[
+        ["Costco Iceland food court price tour", "https://www.tiktok.com/discover/costco-iceland-food-court", "#costcoiceland"]
+      ]
+    },
+    {
+      id:"nz", flag:"🇳🇿", name:"New Zealand", visa:"NO. NZ$5.50",
+      shape:"circle", color:"var(--red)", tilt:3,
+      box:[-47,-34,166,178.6],
+      items:[
+        ["Southern-style chicken sandwich", "Battered chicken, lettuce, tomato, sauce, and cheese, a sandwich unique to the New Zealand menu.", "sandwich"],
+        ["Korean fried chicken", "Sits on the same menu as the standard hot dog and cheese pizza.", "chicken"]
+      ],
+      tiktoks:[
+        ["Costco NZ food court menu walk-through", "https://www.tiktok.com/discover/costco-food-court-nz-menu", "#costconz"]
+      ]
+    },
+    {
+      id:"se", flag:"🇸🇪", name:"Sweden", visa:"NO. NEW-2024",
+      shape:"badge", color:"var(--teal)", tilt:-6,
+      box:[55.3,69.1,11,24.2],
+      items:[
+        ["The newest stamp in the book", "Costco's Swedish warehouses are among its most recent openings, the food-court menu is still settling into local exclusives the way Korea's and Taiwan's did.", "sparkle"],
+        ["One to watch", "Expect Nordic-specific items to show up here as more locations open.", "seedling"]
+      ],
+      tiktoks:[
+        ["Search “Costco Sverige” on TikTok for the latest finds", "https://www.tiktok.com/discover/costco-sverige", "#costcosverige"]
+      ]
+    }
+  ];
+
+  var BONUS = [
+    {
+      id:"hi", flag:"🌺", name:"Hawaii", visa:"NO. LOCAL-808",
+      shape:"circle", color:"var(--red)", tilt:-5,
+      box:[18,23,-160,-154],
+      items:[
+        ["Kokoro grilled musubi", "A frozen, soy-glazed musubi (grilled Spam-style patty, egg, and rice in nori) sold only at Hawaii warehouses, around $18 for eight pieces.", "musubi"],
+        ["Portuguese sausage", "A beloved local breakfast meat stocked in the Hawaii deli case, rarely seen on the mainland.", "hotdog"],
+        ["Lau lau", "Pork and butterfish wrapped in taro leaf, a Hawaiian classic Costco sells ready-made.", "leafwrap"]
+      ],
+      tiktoks:[
+        ["“The unique Costco location shoppers love more than any other”", "https://www.tiktok.com/discover/costco-hawaii", "#costcohawaii"]
+      ]
+    }
+  ];
+
+  var ALL_PLACES = COUNTRIES.concat(BONUS);
+  var stampGrid = document.getElementById("stampGrid");
+  var detailPanel = document.getElementById("detailPanel");
+  var STORAGE_KEY = "food-court-passport-stamps-v1";
+  var openId = null;
+
+  function loadStamps(){
+    try{
+      var raw = localStorage.getItem(STORAGE_KEY);
+      return raw ? JSON.parse(raw) : {};
+    }catch(e){ return {}; }
+  }
+  function saveStamps(s){
+    try{ localStorage.setItem(STORAGE_KEY, JSON.stringify(s)); }catch(e){}
+  }
+  var stamps = loadStamps();
+
+  function updateProgress(){
+    var n = Object.keys(stamps).filter(function(k){ return stamps[k] && COUNTRIES.some(function(c){return c.id===k;}); }).length;
+    document.getElementById("countNow").textContent = n;
+    document.getElementById("countTotal").textContent = COUNTRIES.length;
+  }
+
+  function renderSlot(c, isBonus){
+    var btn = document.createElement("button");
+    btn.type = "button";
+    btn.className = "stamp-slot" + (isBonus ? " bonus" : "") + (stamps[c.id] ? " stamped" : "");
+    btn.id = "slot-" + c.id;
+    btn.style.setProperty("--tilt", c.tilt + "deg");
+    btn.style.setProperty("--slot-color", c.color);
+    btn.setAttribute("aria-label", c.name + (stamps[c.id] ? ", stamped" : ", not yet stamped"));
+    btn.setAttribute("data-tooltip", c.items.map(function(it){ return it[0]; }).join(" • "));
+    var iconKey = c.items[0][2];
+    btn.innerHTML =
+      '<span class="circle">' +
+        '<span class="ring"></span>' +
+        '<svg class="food-icon" viewBox="0 0 64 64"><use href="#ic-' + iconKey + '" x="0" y="0" width="64" height="64"/></svg>' +
+      '</span>' +
+      '<span class="label">' +
+        '<span class="name-row"><span class="flag-inline">' + c.flag + '</span>' + c.name + '</span>' +
+        (isBonus ? '<span class="bonus-tag">bonus</span>' : '') +
+      '</span>';
+
+    btn.addEventListener("click", function(){
+      if(!stamps[c.id]){
+        stamps[c.id] = true;
+        saveStamps(stamps);
+        btn.classList.add("stamped");
+        btn.setAttribute("aria-label", c.name + ", stamped");
+        updateProgress();
+        openDetail(c, isBonus);
+      } else if(openId === c.id){
+        closeDetail();
+      } else {
+        openDetail(c, isBonus);
+      }
+    });
+
+    return btn;
+  }
+
+  function openDetail(c, isBonus){
+    openId = c.id;
+    document.querySelectorAll(".stamp-slot.open").forEach(function(s){ s.classList.remove("open"); });
+    var slot = document.getElementById("slot-" + c.id);
+    if(slot) slot.classList.add("open");
+
+    var itemsHtml = c.items.map(function(it){
+      return '<li class="signature-item">' +
+        '<svg class="mini-icon" viewBox="0 0 64 64"><use href="#ic-' + it[2] + '" x="0" y="0" width="64" height="64"/></svg>' +
+        '<span><b>' + it[0] + '.</b> ' + it[1] + '</span>' +
+      '</li>';
+    }).join("");
+
+    var ticketsHtml = c.tiktoks.map(function(t){
+      return '<li>→ <a href="' + t[1] + '" target="_blank" rel="noopener noreferrer">' + t[0] + '</a> <span class="tag">' + t[2] + '</span></li>';
+    }).join("");
+
+    detailPanel.innerHTML =
+      '<div class="detail-head">' +
+        '<span class="flag">' + c.flag + '</span>' +
+        '<h3>' + c.name + (isBonus ? ' <span class="tag">, bonus, not in the 14</span>' : '') + '</h3>' +
+        '<span class="visa-no mono">' + c.visa + '</span>' +
+      '</div>' +
+      '<ul class="items-list">' + itemsHtml + '</ul>' +
+      '<div class="ticket">' +
+        '<span class="eyebrow">On TikTok</span>' +
+        '<ul>' + ticketsHtml + '</ul>' +
+      '</div>' +
+      '<button class="remove-stamp" type="button">Remove this stamp</button>';
+
+    detailPanel.querySelector(".remove-stamp").addEventListener("click", function(){
+      delete stamps[c.id];
+      saveStamps(stamps);
+      if(slot){ slot.classList.remove("stamped"); slot.setAttribute("aria-label", c.name + ", not yet stamped"); }
+      updateProgress();
+      closeDetail();
+    });
+
+    detailPanel.hidden = false;
+    detailPanel.scrollIntoView({behavior:"smooth", block:"nearest"});
+  }
+
+  function closeDetail(){
+    openId = null;
+    document.querySelectorAll(".stamp-slot.open").forEach(function(s){ s.classList.remove("open"); });
+    detailPanel.hidden = true;
+    detailPanel.innerHTML = "";
+  }
+
+  ALL_PLACES.forEach(function(c){
+    stampGrid.appendChild(renderSlot(c, BONUS.indexOf(c) !== -1));
+  });
+  updateProgress();
+
+  document.getElementById("resetBtn").addEventListener("click", function(){
+    stamps = {};
+    saveStamps(stamps);
+    document.querySelectorAll(".stamp-slot").forEach(function(s){ s.classList.remove("stamped"); });
+    closeDetail();
+    updateProgress();
+  });
+
+  document.getElementById("geoBtn").addEventListener("click", function(){
+    var status = document.getElementById("geoStatus");
+    document.querySelectorAll(".stamp-slot.here").forEach(function(s){ s.classList.remove("here"); });
+
+    if(!("geolocation" in navigator)){
+      status.textContent = "Location isn't available here, stamp manually instead.";
+      return;
+    }
+    status.textContent = "Locating…";
+    try{
+      navigator.geolocation.getCurrentPosition(
+        function(pos){
+          var lat = pos.coords.latitude, lon = pos.coords.longitude;
+          var match = ALL_PLACES.find(function(c){
+            var b = c.box;
+            return lat >= b[0] && lat <= b[1] && lon >= b[2] && lon <= b[3];
+          });
+          if(match){
+            status.textContent = "You're near the " + match.name + " food court.";
+            var slot = document.getElementById("slot-" + match.id);
+            slot.classList.add("here");
+            slot.scrollIntoView({behavior:"smooth", block:"center"});
+          } else {
+            status.textContent = "No Costco food court country matched your location.";
+          }
+        },
+        function(){
+          status.textContent = "Location unavailable, stamp countries manually instead.";
+        },
+        { timeout: 6000 }
+      );
+    }catch(e){
+      status.textContent = "Location unavailable, stamp countries manually instead.";
+    }
+  });
+})();
+</script>
